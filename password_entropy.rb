@@ -2,6 +2,10 @@ require 'ruby-dictionary'
 
 class Password
 
+  attr_reader :password
+
+  COMMON_PASSWORDS = ["password", "admin", "pass", "opensesame"]
+
   def initialize(password)
     @password = password
   end
@@ -34,11 +38,7 @@ class Password
     letters.to_i + multiple_cases.to_i + digits.to_i + symbols.to_i
   end
 
-  #consider using these as well...
-
-  def sentence?
-    @password.gsub(/\s\s+/, ' ').strip.count(' ') > 1 && length > 10
-  end
+  #consider using these as auto failures...
 
   def word?
     @dictionary = Dictionary.from_file('words.txt')
@@ -60,28 +60,65 @@ class Password
   end
     #compare to asc or desc digits greater than 3 characters
 
+  def repetitious?
+    characters = @password.split('')
+    characters.each_with_index do |character, index|
+      return true if characters[index + 1] == character && characters[index + 2] == character
+    end
+    false
+  end
+
+  def common?
+    COMMON_PASSWORDS.include?(@password.downcase)
+  end
+
 end
 
-test_pass = Password.new("V@riab1e")
-sky_pass = Password.new("the force is lucid on westward mornings")
-key_pass = Password.new('asdfgh')
-num_pass = Password.new("12345brooks!")
+tst = Password.new("V@riab1e")
+sky = Password.new("the force is lucid on westward mornings")
+wrd = Password.new("antifogmatic")
+key = Password.new('asdfgh')
+num = Password.new("12345neko!")
+rep = Password.new("123aaa#B")
+cmn = Password.new("opensesame")
 
-puts '=========='
+puts '====ENTROPY SCORE===='
 
-puts test_pass.entropy
-puts sky_pass.entropy
+puts "#{tst.password}: #{tst.entropy.round(1)}"
+puts "#{sky.password}: #{sky.entropy.round(1)}"
+puts "#{wrd.password}: #{wrd.entropy.round(1)}"
+puts "#{key.password}: #{key.entropy.round(1)}"
+puts "#{num.password}: #{num.entropy.round(1)}"
+puts "#{rep.password}: #{rep.entropy.round(1)}"
+puts "#{cmn.password}: #{cmn.entropy.round(1)}"
+puts ""
 
-puts '=========='
+puts '====DICTIONARY WORDS===='
 
-puts test_pass.numerical_pattern?
-puts num_pass.numerical_pattern?
+puts "#{tst.password}: #{tst.word?}"
+puts "#{wrd.password}: #{wrd.word?}"
+puts ""
 
-puts '=========='
+puts '====KEYBOARD PATTERNS===='
 
-puts test_pass.key_pattern?
-puts key_pass.key_pattern?
+puts "#{tst.password}: #{tst.key_pattern?}"
+puts "#{key.password}: #{key.key_pattern?}"
+puts ""
 
+puts '====NUMBER PATTERNS===='
 
+puts "#{tst.password}: #{tst.numerical_pattern?}"
+puts "#{num.password}: #{num.numerical_pattern?}"
+puts ""
 
+puts '====REPETITIOUS CHARACTERS===='
+
+puts "#{tst.password}: #{tst.repetitious?}"
+puts "#{rep.password}: #{rep.repetitious?}"
+puts ""
+
+puts '====COMMON PASSWORDS===='
+
+puts "#{tst.password}: #{tst.common?}"
+puts "#{cmn.password}: #{cmn.common?}"
   
