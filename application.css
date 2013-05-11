@@ -1,0 +1,16 @@
+.meter {
+  height: 20px;
+  width: 500px;
+  border: solid black 2px;
+}
+
+.meterbar {
+  height: 20px;
+  width: 50%;
+  background: blue;
+}
+
+#password {
+  width: 500px; 
+
+}
