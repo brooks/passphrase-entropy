@@ -1,31 +1,12 @@
-var strength = function(password){
-  if(keyPattern(password) || numericalPattern(password) || repetitious(password) || common(password)) {
-    return Math.round(logNormalized(password) * 0.5) 
-  }
-  return Math.round(logNormalized(password))
+function Password(content) {
+  this.content = content;
 };
 
-var logNormalized = function(password){
-  return 15.5 * Math.log(entropy(password) / 13.62)
-};
-
-var entropy = function(password){
-  return Math.log(Math.pow(count(password), length(password)))/Math.log(2)
-};
-
-var length = function(password){
-  return password.length
-};
-
-var count = function(password){
-  return letters(password) + digits(password) + symbols(password)
-};
-
-var letters = function(password){
-  if (password.match(/[a-z]/) && password.match(/[A-Z]/)) {
+Password.prototype.letters = function(){
+  if (this.content.match(/[a-z]/) && this.content.match(/[A-Z]/)) {
     return 52
   }
-  else if (password.match(/[a-z]|[A-Z]/)){
+  else if (this.content.match(/[a-z]|[A-Z]/)){
     return 26
   }
   else {
@@ -33,8 +14,8 @@ var letters = function(password){
   }
 };
 
-var digits = function(password){
-  if(password.match(/\d/)){
+Password.prototype.digits = function(){
+  if(this.content.match(/\d/)){
     return 10
   }
   else {
@@ -42,8 +23,8 @@ var digits = function(password){
   }
 };
 
-var symbols = function(password){
-  if(password.match(/\W/)){
+Password.prototype.symbols = function(){
+  if(this.content.match(/\W/)){
     return 33
   }
   else {
@@ -51,18 +32,34 @@ var symbols = function(password){
   }
 };
 
-var keyPattern = function(password){
+Password.prototype.count = function(){
+  return this.letters() + this.digits() + this.symbols()
+};
+
+Password.prototype.length = function(){
+  return this.content.length
+};
+
+Password.prototype.entropy = function(){
+  return Math.log(Math.pow(this.count(), this.length()))/Math.log(2)
+};
+
+Password.prototype.logNormalized = function(){
+  return 15.5 * Math.log(this.entropy() / 13.62)
+};
+
+Password.prototype.keyPattern = function(){
   KEY_PATTERNS = ["zxc", "cxz", "bnm", "mnb", "jkl", "lkj", "asd", "dsa", "qwe", "ewq", "iop", "poi"]
   for(var i = 0; i < KEY_PATTERNS.length; i++) {
-    if(password.toLowerCase().indexOf(KEY_PATTERNS[i]) !== -1){
+    if(this.content.toLowerCase().indexOf(KEY_PATTERNS[i]) !== -1){
       return true
     }
   }
   return false
 };
 
-var numericalPattern = function(password){
-  characters = password.split('')
+Password.prototype.numericalPattern = function(){
+  characters = this.content.split('')
   for (var i = 0; i < characters.length; i++) {
     if(parseInt(characters[i + 1]) === (parseInt(characters[i]) + 1) && parseInt(characters[i + 2]) === (parseInt(characters[i]) + 2) && parseInt(characters[i + 3]) === (parseInt(characters[i]) + 3)){
       return true
@@ -74,8 +71,8 @@ var numericalPattern = function(password){
   return false
 };
 
-var repetitious = function(password){
-  characters = password.split('')
+Password.prototype.repetitious = function(){
+  characters = this.content.split('')
   for(var i = 0; i < characters.length; i++) {
     if(characters[i] === characters[i + 1] && characters[i] === characters[i + 2]){
       return true
@@ -84,14 +81,13 @@ var repetitious = function(password){
   return false
 };
 
-
-var common = function(password){
-  COMMON_PASSWORDS = ["password", "pass", "word", "admin", "administrator", "trustnoi", "trustnol", "welcome", "master", "sunshine", "letmein", "jesus", "opensesame"]
+Password.prototype.common = function(){
+  COMMON_PASSWORDS = ["password", "pass", "admin", "administrator", "trustnoi", "trustnol", "welcome", "master", "sunshine", "letmein", "jesus", "opensesame"]
   passwords = []
-  passwords.push(password)
-  if(password.match(/[@0|1$5]/)){
-    passwords.push(password.replace('@', 'a').replace('0', 'o').replace(/[|1!]/, 'l').replace(/[$5]/, 's'))
-    passwords.push(password.replace('@', 'a').replace('0', 'o').replace(/[|1!]/, 'i').replace(/[$5]/, 's'))
+  passwords.push(this.content)
+  if(this.content.match(/[@0|1$5]/)){
+    passwords.push(this.content.replace('@', 'a').replace('0', 'o').replace(/[|1!]/, 'l').replace(/[$5]/, 's'))
+    passwords.push(this.content.replace('@', 'a').replace('0', 'o').replace(/[|1!]/, 'i').replace(/[$5]/, 's'))
   }
   for(var i = 0; i < COMMON_PASSWORDS.length; i++) {
     for(var x = 0; x < passwords.length; x++) {
@@ -103,9 +99,25 @@ var common = function(password){
   return false
 };
 
+Password.prototype.strength = function(){
+  if(this.keyPattern() || this.numericalPattern() || this.repetitious() || this.common()) {
+    return Math.round(this.logNormalized() * 0.5) 
+  }
+  return Math.round(this.logNormalized())
+};
 
+var tst = new Password("V@riab1e");
+var sky = new Password("the force is lucid on westward mornings");
+var wrd = new Password("trustno1");
+var key = new Password('asdfgh');
+var num = new Password("12345neko!");
+var rep = new Password("123aaa#B");
+var cmn = new Password("@dm!n|strat0r's p@5$w0rd");
 
-
-
-
-
+console.log(tst.content) + " " + console.log(tst.strength());
+console.log(sky.content) + " " + console.log(sky.strength());
+console.log(wrd.content) + " " + console.log(wrd.strength());
+console.log(key.content) + " " + console.log(key.strength());
+console.log(num.content) + " " + console.log(num.strength());
+console.log(rep.content) + " " + console.log(rep.strength());
+console.log(cmn.content) + " " + console.log(cmn.strength());
