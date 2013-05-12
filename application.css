@@ -6,8 +6,8 @@
 
 .meterbar {
   height: 20px;
-  width: 50%;
-  background: blue;
+  width: 5%;
+  background: red;
 }
 
 #password {

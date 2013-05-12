@@ -1,7 +1,3 @@
-Finish javascript/Jquery algorithm for common passwords etc
-
-link html to Jquery algorithm
-
 Improve hideous design
 
 Gem work
