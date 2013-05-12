@@ -1,20 +1,19 @@
 $(document).ready(function() {
 
-  $('#password').on("input", function(){
+  $('#password').on("input keydown change", function(){
     var eval = new Password($(this).val()).strength() * 2
     $('.meterbar').css('width', function(){
       return String(eval) + '%'
     });
-    console.log(eval)
     if(eval < 25) {
-        $('.meterbar').css('background', 'red')
-      }
-      if(eval >= 25) {
-        $('.meterbar').css('background', 'yellow')
-      }
-      if(eval >= 40) {
-        $('.meterbar').css('background', 'green')
-      }
+      $('.meterbar').css('background', 'red')
+    }
+    if(eval >= 25) {
+      $('.meterbar').css('background', 'yellow')
+    }
+    if(eval >= 40) {
+      $('.meterbar').css('background', 'green')
+    }
   });
 
   function Password(content) {

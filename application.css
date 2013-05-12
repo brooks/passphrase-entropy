@@ -1,16 +1,22 @@
 .meter {
-  height: 20px;
-  width: 500px;
-  border: solid black 2px;
+  width: 200px;
 }
 
 .meterbar {
-  height: 20px;
-  width: 5%;
+  height: 5px;
+  width: 0%;
   background: red;
+  border-radius: 15px;
 }
 
 #password {
-  width: 500px; 
+  
+  width: 250px; 
+  border-radius: 2px;
+}
 
+
+
+h3 {
+  font-family: Georgia;
 }
