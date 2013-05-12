@@ -5,7 +5,8 @@ class Password
   attr_reader :password
   
   #lowercase passwords only
-  COMMON_PASSWORDS = ["password", "pass", "word", "admin", "administrator", "trustnoi" "trustnol" "welcome", "master", "sunshine" "letmein", "jesus", "opensesame"]
+  COMMON_PASSWORDS = ["password", "pass", "word", "admin", "administrator", "trustnoi", "trustnol", "welcome", "master", "sunshine", "letmein", "jesus", "opensesame"]
+  KEY_PATTERNS = ["zxc", "cxz", "bnm", "mnb", "jkl", "lkj", "asd", "dsa", "qwe", "ewq", "iop", "poi"]
 
   def initialize(password)
     @password = password
@@ -21,7 +22,7 @@ class Password
   end
 
   def strength
-    key_pattern? || numerical_pattern? || repetitious? || common? ? (log_normalized * 0.5).round : log_normalized.round
+     key_pattern? || numerical_pattern? || repetitious? || common? ? (log_normalized * 0.5).round : log_normalized.round
   end
 
   def length
@@ -49,8 +50,8 @@ class Password
   end
 
   def key_pattern?
-    @key_patterns = Dictionary.from_file('key_patterns.txt')
-    @key_patterns.exists?(@password)
+    KEY_PATTERNS.each { |pattern| return true if @password.downcase.include?(pattern) }
+    false
   end
 
   def numerical_pattern?
