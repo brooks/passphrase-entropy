@@ -5,13 +5,19 @@ $(document).ready(function() {
     $('.meterbar').css('width', function(){
       return String(eval) + '%'
     });
-    if(eval < 25) {
-      $('.meterbar').css('background', 'red')
+    if(eval < 1) {
+      $('.meterbar').css('width', '0%')
     }
-    if(eval >= 25) {
-      $('.meterbar').css('background', 'yellow')
+    if(eval < 20) {
+      $('.meterbar').css('background', 'red')
+    }    
+    if(eval >= 20 && eval < 40) {
+      $('.meterbar').css('background', 'goldenrod')
     }
     if(eval >= 40) {
+      $('.meterbar').css('background', '#08c')
+    }
+    if(eval >= 60) {
       $('.meterbar').css('background', 'green')
     }
   });
@@ -119,7 +125,12 @@ $(document).ready(function() {
 
   Password.prototype.strength = function(){
     if(this.keyPattern() || this.numericalPattern() || this.repetitious() || this.common()) {
+      if(this.content.length < 12) {
       return Math.round(this.logNormalized() * 0.5) 
+      }
+      else {
+      return Math.round(this.logNormalized() * 0.8) 
+      }
     }
     return Math.round(this.logNormalized())
   };

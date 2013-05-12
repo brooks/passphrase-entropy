@@ -4,8 +4,8 @@
 
 .meterbar {
   height: 5px;
-  width: 0%;
-  background: red;
+  width: 5%;
+  background: #FA1505;
   border-radius: 15px;
 }
 
