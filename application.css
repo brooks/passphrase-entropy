@@ -1,10 +1,10 @@
 .meter {
-  width: 200px;
+  width: 250px;
 }
 
 .meterbar {
   height: 5px;
-  width: 5%;
+  width: 0%;
   background: #FA1505;
   border-radius: 15px;
 }

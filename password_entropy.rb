@@ -17,12 +17,8 @@ class Password
     Math.log2(count ** length)
   end
 
-  def log_normalized
-    15.5 * Math.log(entropy / 13.62)
-  end
-
   def strength
-     key_pattern? || numerical_pattern? || repetitious? || common? ? (log_normalized * 0.5).round : log_normalized.round
+    (15.5 * bad_password_multiplier * Math.log(entropy / 13.62)).round(2)
   end
 
   def length
@@ -82,15 +78,35 @@ class Password
     end
     false
   end
+
+  def uniqueness
+    (@password.downcase.split('').uniq.length/length.to_f) < 0.4
+  end
+
+  def repeaters
+    mode = []
+    @password.downcase.split('').uniq.each do |character|
+      mode << @password.split('').count(character)
+    end
+    mode.max.downto(2) do |num|
+      return true if (mode.count(num)/mode.length.to_f) > 0.5
+    end
+    false
+  end
+
+  def bad_password_multiplier
+    repeaters || uniqueness ? (return 0.1) : 1
+    key_pattern? || numerical_pattern? || repetitious? || common? ? @password.length < 12 ? 0.5 : 0.75 : 1
+  end
 end
 
-tst = Password.new("V@riab1e")
+tst = Password.new("pygmy marmoset marmoset pygmy")
 sky = Password.new("the force is lucid on westward mornings")
 wrd = Password.new("trustno1")
 key = Password.new('asdfgh')
 num = Password.new("12345neko!")
 rep = Password.new("123aaa#B")
-cmn = Password.new("@dm!n|strat0r's p@5$w0rd")
+cmn = Password.new("@dm!n|strat0r's p@5$w0rd:")
 
 puts '====STRENGTH===='
 

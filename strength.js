@@ -2,11 +2,13 @@ $(document).ready(function() {
 
   $('#password').on("input keydown change", function(){
     var eval = new Password($(this).val()).strength() * 2
+    $('#score').html(Math.round(eval))
     $('.meterbar').css('width', function(){
       return String(eval) + '%'
     });
     if(eval < 1) {
       $('.meterbar').css('width', '0%')
+      $('#score').html("")
     }
     if(eval < 20) {
       $('.meterbar').css('background', 'red')
@@ -14,11 +16,19 @@ $(document).ready(function() {
     if(eval >= 20 && eval < 40) {
       $('.meterbar').css('background', 'goldenrod')
     }
-    if(eval >= 40) {
+    if(eval >= 40 && eval < 60) {
       $('.meterbar').css('background', '#08c')
     }
-    if(eval >= 60) {
-      $('.meterbar').css('background', 'green')
+    if(eval >= 60 && eval < 80) {
+      $('.meterbar').css('background', '#02D61E')
+    }
+    if(eval >= 80) {
+      $('.meterbar').css('background', '#F54EAF')      
+    }
+    if(eval > 100) {
+      $('.meterbar').css('background', '#F54EAF')
+      $('.meterbar').css('width', '100%')
+      $('#score').html("100")
     }
   });
 
@@ -69,7 +79,7 @@ $(document).ready(function() {
   };
 
   Password.prototype.logNormalized = function(){
-    return 15.5 * Math.log(this.entropy() / 13.62)
+    
   };
 
   Password.prototype.keyPattern = function(){
@@ -123,15 +133,63 @@ $(document).ready(function() {
     return false
   };
 
-  Password.prototype.strength = function(){
-    if(this.keyPattern() || this.numericalPattern() || this.repetitious() || this.common()) {
-      if(this.content.length < 12) {
-      return Math.round(this.logNormalized() * 0.5) 
-      }
-      else {
-      return Math.round(this.logNormalized() * 0.8) 
+  Password.prototype.uniqueContent = function(){
+    var uniqueArray = []
+    var contentArray = this.content.toLowerCase().split('')
+    for(var i = 0; i < contentArray.length; i++) {
+      if(uniqueArray.indexOf(contentArray[i]) === -1) {
+        uniqueArray.push(contentArray[i])
       }
     }
-    return Math.round(this.logNormalized())
+    return uniqueArray
+  };
+
+
+  Password.prototype.uniqueness = function(){
+    var unique = (this.uniqueContent().length / this.length()) < 0.4 ? true : false
+    return unique
+  };
+
+  var counter = function(array, num){
+    var counter = 0;
+    for(var i = 0; i < array.length; ++i){
+      if(array[i] == num) {
+        counter++;
+      }
+    }
+    return counter
+  };
+
+  Password.prototype.repeaters = function(){
+    mode = []
+    var contentArray = this.content.toLowerCase().split('')
+    var uniqueArray = this.uniqueContent()
+    for(var i = 0; i < uniqueArray.length; i++) {
+      mode.push(counter(contentArray, uniqueArray[i])) 
+    }
+    var max = Math.max.apply(Math, mode);
+    for(var i = max; i > 1; i--) {
+      if((counter(mode, i)/mode.length) > 0.5) {
+        return true
+      }
+    }
+    return false
+  };
+
+  Password.prototype.badPasswordMultiplier = function(){
+    if(this.repeaters() || this.uniqueness()) {
+      return 0.1
+    }
+    else if(this.keyPattern() || this.numericalPattern() || this.repetitious() || this.common()) {
+      var mult = (this.content.length < 12) ? 0.5 : 0.75
+      return mult
+    }
+    else{
+      return 1
+    }
+  };
+
+  Password.prototype.strength = function(){
+    return 15.5 * this.badPasswordMultiplier() * Math.log(this.entropy() / 13.62)
   };
 });
