@@ -1,12 +1,2 @@
-Improve hideous design
+Build gem
 
-Gem work
-
-complexity
-
-  entropy is a factor of randomness
-  measure randomness by finding # of uniq characters
-
-  repeat words?
-
-  
