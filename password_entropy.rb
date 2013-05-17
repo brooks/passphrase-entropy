@@ -1,11 +1,9 @@
-require 'ruby-dictionary'
-
 class Password
 
   attr_reader :password
   
   #lowercase passwords only
-  COMMON_PASSWORDS = ["password", "pass", "admin", "administrator", "trustnoi", "trustnol", "welcome", "master", "sunshine", "letmein", "jesus", "opensesame"]
+  COMMON_PASSWORDS = ["admin", "administrator", "jesus", "letmein", "master", "open sesame", "opensesame", "password", "sunshine", "trustnoi", "trustnol", "welcome"]
   KEY_PATTERNS = ["zxc", "cxz", "bnm", "mnb", "jkl", "lkj", "asd", "dsa", "qwe", "ewq", "iop", "poi"]
 
   def initialize(password)
@@ -18,7 +16,7 @@ class Password
   end
 
   def strength
-    (15.5 * bad_password_multiplier * Math.log(entropy / 13.62)).round(2)
+    (31 * bad_password_multiplier * Math.log(entropy / 13.62)).round(2)
   end
 
   def length
@@ -89,7 +87,7 @@ class Password
       mode << @password.split('').count(character)
     end
     mode.max.downto(2) do |num|
-      return true if (mode.count(num)/mode.length.to_f) > 0.5
+      return true if (mode.count(num)/mode.length.to_f) > 0.75
     end
     false
   end
@@ -100,20 +98,20 @@ class Password
   end
 end
 
-tst = Password.new("pygmy marmoset marmoset pygmy")
-sky = Password.new("the force is lucid on westward mornings")
-wrd = Password.new("trustno1")
-key = Password.new('asdfgh')
-num = Password.new("12345neko!")
-rep = Password.new("123aaa#B")
-cmn = Password.new("@dm!n|strat0r's p@5$w0rd:")
+# tst = Password.new("pygmy marmoset marmoset pygmy")
+# sky = Password.new("the force is lucid on westward mornings")
+# wrd = Password.new("trustno1")
+# key = Password.new('asdfgh')
+# num = Password.new("12345neko!")
+# rep = Password.new("123aaa#B")
+# cmn = Password.new("@dm!n|strat0r's p@5$w0rd")
 
-puts '====STRENGTH===='
+# puts '====STRENGTH===='
 
-puts "#{tst.password}: #{tst.strength}"
-puts "#{sky.password}: #{sky.strength}"
-puts "#{wrd.password}: #{wrd.strength}"
-puts "#{key.password}: #{key.strength}"
-puts "#{num.password}: #{num.strength}"
-puts "#{rep.password}: #{rep.strength}"
-puts "#{cmn.password}: #{cmn.strength}"
+# puts "#{tst.password}: #{tst.strength}"
+# puts "#{sky.password}: #{sky.strength}"
+# puts "#{wrd.password}: #{wrd.strength}"
+# puts "#{key.password}: #{key.strength}"
+# puts "#{num.password}: #{num.strength}"
+# puts "#{rep.password}: #{rep.strength}"
+# puts "#{cmn.password}: #{cmn.strength}"

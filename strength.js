@@ -1,8 +1,8 @@
 $(document).ready(function() {
 
   $('#password').on("input keydown change", function(){
-    var eval = new Password($(this).val()).strength() * 2
-    $('#score').html(Math.round(eval))
+    var eval = new Password($(this).val()).strength()
+    $('#score').html(Math.round(eval * 100)/100)
     $('.meterbar').css('width', function(){
       return String(eval) + '%'
     });
@@ -33,7 +33,7 @@ $(document).ready(function() {
   });
 
 
-  COMMON_PASSWORDS = ["password", "admin", "open sesame", "administrator", "trustnoi", "trustnol", "welcome", "master", "sunshine", "letmein", "jesus", "opensesame"]
+  COMMON_PASSWORDS = ["admin", "administrator", "jesus", "letmein", "master", "open sesame", "opensesame", "password", "sunshine", "trustnoi", "trustnol", "welcome"]
   KEY_PATTERNS = ["zxc", "cxz", "bnm", "mnb", "jkl", "lkj", "asd", "dsa", "qwe", "ewq", "iop", "poi"]
         
   // a method to count the number of occurences of a character in an array
@@ -197,7 +197,7 @@ $(document).ready(function() {
     // password strength accounts for raw entropy + failure of tests
 
     this.strength = function(){
-      return 15.5 * this.badPasswordMultiplier() * Math.log(this.entropy() / 13.62)
+      return 31 * this.badPasswordMultiplier() * Math.log(this.entropy() / 13.62)
     };
   };
 });
