@@ -33,7 +33,7 @@ $(document).ready(function() {
   });
 
 
-  COMMON_PASSWORDS = ["password", "pass", "admin", "administrator", "trustnoi", "trustnol", "welcome", "master", "sunshine", "letmein", "jesus", "opensesame"]
+  COMMON_PASSWORDS = ["password", "admin", "open sesame", "administrator", "trustnoi", "trustnol", "welcome", "master", "sunshine", "letmein", "jesus", "opensesame"]
   KEY_PATTERNS = ["zxc", "cxz", "bnm", "mnb", "jkl", "lkj", "asd", "dsa", "qwe", "ewq", "iop", "poi"]
         
   // a method to count the number of occurences of a character in an array
@@ -172,7 +172,7 @@ $(document).ready(function() {
       }
       var max = Math.max.apply(Math, mode);
       for(var i = max; i > 1; i--) {
-        if((counter(mode, i)/mode.length) > 0.5) {
+        if((counter(mode, i)/mode.length) > 0.75) {
           return true
         }
       }
