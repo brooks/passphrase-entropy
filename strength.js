@@ -32,123 +32,11 @@ $(document).ready(function() {
     }
   });
 
-  function Password(content) {
-    this.content = content;
-  };
 
-  Password.prototype.letters = function(){
-    if (this.content.match(/[a-z]/) && this.content.match(/[A-Z]/)) {
-      return 52
-    }
-    else if (this.content.match(/[a-z]|[A-Z]/)){
-      return 26
-    }
-    else {
-      return 0
-    }
-  };
-
-  Password.prototype.digits = function(){
-    if(this.content.match(/\d/)){
-      return 10
-    }
-    else {
-      return 0
-    }
-  };
-
-  Password.prototype.symbols = function(){
-    if(this.content.match(/\W/)){
-      return 33
-    }
-    else {
-      return 0
-    }
-  };
-
-  Password.prototype.count = function(){
-    return this.letters() + this.digits() + this.symbols()
-  };
-
-  Password.prototype.length = function(){
-    return this.content.length
-  };
-
-  Password.prototype.entropy = function(){
-    return Math.log(Math.pow(this.count(), this.length()))/Math.log(2)
-  };
-
-  Password.prototype.logNormalized = function(){
-    
-  };
-
-  Password.prototype.keyPattern = function(){
-    KEY_PATTERNS = ["zxc", "cxz", "bnm", "mnb", "jkl", "lkj", "asd", "dsa", "qwe", "ewq", "iop", "poi"]
-    for(var i = 0; i < KEY_PATTERNS.length; i++) {
-      if(this.content.toLowerCase().indexOf(KEY_PATTERNS[i]) !== -1){
-        return true
-      }
-    }
-    return false
-  };
-
-  Password.prototype.numericalPattern = function(){
-    characters = this.content.split('')
-    for (var i = 0; i < characters.length; i++) {
-      if(parseInt(characters[i + 1]) === (parseInt(characters[i]) + 1) && parseInt(characters[i + 2]) === (parseInt(characters[i]) + 2) && parseInt(characters[i + 3]) === (parseInt(characters[i]) + 3)){
-        return true
-      }
-      if(parseInt(characters[i + 1]) === (parseInt(characters[i]) - 1) && parseInt(characters[i + 2]) === (parseInt(characters[i]) - 2) && parseInt(characters[i + 3]) === (parseInt(characters[i]) - 3)){
-        return true
-      }
-    }
-    return false
-  };
-
-  Password.prototype.repetitious = function(){
-    characters = this.content.split('')
-    for(var i = 0; i < characters.length; i++) {
-      if(characters[i] === characters[i + 1] && characters[i] === characters[i + 2]){
-        return true
-      }
-    }
-    return false
-  };
-
-  Password.prototype.common = function(){
-    COMMON_PASSWORDS = ["password", "pass", "admin", "administrator", "trustnoi", "trustnol", "welcome", "master", "sunshine", "letmein", "jesus", "opensesame"]
-    passwords = []
-    passwords.push(this.content)
-    if(this.content.match(/[@0|1$5]/)){
-      passwords.push(this.content.replace('@', 'a').replace('0', 'o').replace(/[|1!]/, 'l').replace(/[$5]/, 's'))
-      passwords.push(this.content.replace('@', 'a').replace('0', 'o').replace(/[|1!]/, 'i').replace(/[$5]/, 's'))
-    }
-    for(var i = 0; i < COMMON_PASSWORDS.length; i++) {
-      for(var x = 0; x < passwords.length; x++) {
-        if(passwords[x].toLowerCase().indexOf(COMMON_PASSWORDS[i]) !== -1){
-          return true
-        }
-      }
-    }
-    return false
-  };
-
-  Password.prototype.uniqueContent = function(){
-    var uniqueArray = []
-    var contentArray = this.content.toLowerCase().split('')
-    for(var i = 0; i < contentArray.length; i++) {
-      if(uniqueArray.indexOf(contentArray[i]) === -1) {
-        uniqueArray.push(contentArray[i])
-      }
-    }
-    return uniqueArray
-  };
-
-
-  Password.prototype.uniqueness = function(){
-    var unique = (this.uniqueContent().length / this.length()) < 0.4 ? true : false
-    return unique
-  };
+  COMMON_PASSWORDS = ["password", "pass", "admin", "administrator", "trustnoi", "trustnol", "welcome", "master", "sunshine", "letmein", "jesus", "opensesame"]
+  KEY_PATTERNS = ["zxc", "cxz", "bnm", "mnb", "jkl", "lkj", "asd", "dsa", "qwe", "ewq", "iop", "poi"]
+        
+  // a method to count the number of occurences of a character in an array
 
   var counter = function(array, num){
     var counter = 0;
@@ -160,36 +48,156 @@ $(document).ready(function() {
     return counter
   };
 
-  Password.prototype.repeaters = function(){
-    mode = []
-    var contentArray = this.content.toLowerCase().split('')
-    var uniqueArray = this.uniqueContent()
-    for(var i = 0; i < uniqueArray.length; i++) {
-      mode.push(counter(contentArray, uniqueArray[i])) 
-    }
-    var max = Math.max.apply(Math, mode);
-    for(var i = max; i > 1; i--) {
-      if((counter(mode, i)/mode.length) > 0.5) {
-        return true
+  function Password(content) {
+    this.content = content;
+    
+    // the following functions define raw entropy score:
+    // a Fx of password length & num of available characters
+
+    this.letters = function(){
+      if (this.content.match(/[a-z]/) && this.content.match(/[A-Z]/)) {
+        return 52
       }
-    }
-    return false
-  };
+      else if (this.content.match(/[a-z]|[A-Z]/)){
+        return 26
+      }
+      else {
+        return 0
+      }
+    };
 
-  Password.prototype.badPasswordMultiplier = function(){
-    if(this.repeaters() || this.uniqueness()) {
-      return 0.1
-    }
-    else if(this.keyPattern() || this.numericalPattern() || this.repetitious() || this.common()) {
-      var mult = (this.content.length < 12) ? 0.5 : 0.75
-      return mult
-    }
-    else{
-      return 1
-    }
-  };
+    this.digits = function(){
+      if(this.content.match(/\d/)){
+        return 10
+      }
+      else {
+        return 0
+      }
+    };
 
-  Password.prototype.strength = function(){
-    return 15.5 * this.badPasswordMultiplier() * Math.log(this.entropy() / 13.62)
+    this.symbols = function(){
+      if(this.content.match(/\W/)){
+        return 33
+      }
+      else {
+        return 0
+      }  
+    };
+
+    this.count = function(){
+      return this.letters() + this.digits() + this.symbols()
+    };
+
+    this.length = function(){
+      return this.content.length
+    };
+
+    this.entropy = function(){
+      return Math.log(Math.pow(this.count(), this.length()))/Math.log(2)
+    };
+
+    // the following functions are tests for weak passwords
+
+    this.keyPattern = function(){
+      for(var i = 0; i < KEY_PATTERNS.length; i++) {
+        if(this.content.toLowerCase().indexOf(KEY_PATTERNS[i]) !== -1){
+          return true
+        }
+      }
+      return false
+    };
+
+    this.numericalPattern = function(){
+      characters = this.content.split('')
+      for (var i = 0; i < characters.length; i++) {
+        if(parseInt(characters[i + 1]) === (parseInt(characters[i]) + 1) && parseInt(characters[i + 2]) === (parseInt(characters[i]) + 2) && parseInt(characters[i + 3]) === (parseInt(characters[i]) + 3)){
+         return true
+        }
+        if(parseInt(characters[i + 1]) === (parseInt(characters[i]) - 1) && parseInt(characters[i + 2]) === (parseInt(characters[i]) - 2) && parseInt(characters[i + 3]) === (parseInt(characters[i]) - 3)){
+          return true
+        }
+      }
+      return false
+    };
+
+    this.repetitious = function(){
+      characters = this.content.split('')
+      for(var i = 0; i < characters.length; i++) {
+        if(characters[i] === characters[i + 1] && characters[i] === characters[i + 2]){
+          return true
+        }
+      }
+      return false
+    };
+
+    this.common = function(){
+      passwords = []
+      passwords.push(this.content)
+      if(this.content.match(/[@0|1$5]/)){
+        passwords.push(this.content.replace('@', 'a').replace('0', 'o').replace(/[|1!]/, 'l').replace(/[$5]/, 's'))
+        passwords.push(this.content.replace('@', 'a').replace('0', 'o').replace(/[|1!]/, 'i').replace(/[$5]/, 's'))
+      }
+      for(var i = 0; i < COMMON_PASSWORDS.length; i++) {
+        for(var x = 0; x < passwords.length; x++) {
+          if(passwords[x].toLowerCase().indexOf(COMMON_PASSWORDS[i]) !== -1){
+            return true
+          }
+        }
+      }
+      return false
+    };
+
+    this.uniqueContent = function(){
+      var uniqueArray = []
+      var contentArray = this.content.toLowerCase().split('')
+      for(var i = 0; i < contentArray.length; i++) {
+        if(uniqueArray.indexOf(contentArray[i]) === -1) {
+          uniqueArray.push(contentArray[i])
+        }
+      }
+      return uniqueArray
+    };
+
+    this.uniqueness = function(){
+      var unique = (this.uniqueContent().length / this.length()) < 0.4 ? true : false
+      return unique
+    };
+
+    this.repeaters = function(){
+      mode = []
+      var contentArray = this.content.toLowerCase().split('')
+      var uniqueArray = this.uniqueContent()
+      for(var i = 0; i < uniqueArray.length; i++) {
+        mode.push(counter(contentArray, uniqueArray[i])) 
+      }
+      var max = Math.max.apply(Math, mode);
+      for(var i = max; i > 1; i--) {
+        if((counter(mode, i)/mode.length) > 0.5) {
+          return true
+        }
+      }
+      return false
+    };
+
+    // multiplies the entropy score by a multiplier for failing above tests
+
+    this.badPasswordMultiplier = function(){
+      if(this.repeaters() || this.uniqueness()) {
+        return 0.1
+      }
+      else if(this.keyPattern() || this.numericalPattern() || this.repetitious() || this.common()) {
+        var mult = (this.content.length < 12) ? 0.5 : 0.75
+        return mult
+      }
+      else{
+        return 1
+      }
+    };
+
+    // password strength accounts for raw entropy + failure of tests
+
+    this.strength = function(){
+      return 15.5 * this.badPasswordMultiplier() * Math.log(this.entropy() / 13.62)
+    };
   };
 });
