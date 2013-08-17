@@ -1,37 +1,64 @@
 $(document).ready(function() {
 
-  $('#password').on("input keydown change", function(){
-    var eval = new Password($(this).val()).strength()
-    $('#score').html(Math.round(eval * 100)/100)
+  $('#new-passphrase, #confirm-passphrase').on("input keydown change", function(){
+    
+    var eval = new Password($('#new-passphrase').val()).strength()
+    $('#strength').html('Weak')
     $('.meterbar').css('width', function(){
       return String(eval) + '%'
     });
-    if(eval < 1) {
-      $('.meterbar').css('width', '0%')
-      $('#score').html("")
-    }
     if(eval < 20) {
       $('.meterbar').css('background', 'red')
+      $('#strength').css('color', 'red')
     }    
-    if(eval >= 20 && eval < 40) {
+    else if(eval >= 20 && eval < 40) {
       $('.meterbar').css('background', 'goldenrod')
+      $('#strength').css('color', 'goldenrod')
+      $('#strength').html('Getting Stronger')
     }
-    if(eval >= 40 && eval < 60) {
-      $('.meterbar').css('background', '#08c')
+    else if(eval >= 40 && eval < 60) {
+      $('.meterbar').css('background', '#B6D602')
+      $('#strength').css('color', '#B6D602')
+      $('#strength').html('Almost There!')
     }
-    if(eval >= 60 && eval < 80) {
+    else if(eval >= 60 && eval < 80) {
       $('.meterbar').css('background', '#02D61E')
+      $('#strength').css('color', '#02D61E')
+      $('#strength').html('Secure')
     }
-    if(eval >= 80) {
-      $('.meterbar').css('background', '#F54EAF')      
-    }
-    if(eval > 100) {
+    else if(eval >= 80) {
       $('.meterbar').css('background', '#F54EAF')
-      $('.meterbar').css('width', '100%')
-      $('#score').html("100")
+      $('#strength').css('color', '#F54EAF')
+      $('#strength').html('Impenetrable')      
+    }
+    if($('#confirm-passphrase').val()==$('#new-passphrase').val()){
+      $('#match').html('Confirmed')
+      $('#match').css('color', $('#strength').css('color'))
+    }
+    else{
+      $('#match').html('Please Verify')
+      $('#match').css('color', 'red')
+    }
+    if(eval < -100) {
+      $('.meterbar').css('width', '0%')
+      $('#strength, #match').html('')
+    }
+    if(eval >=60 && $('#confirm-passphrase').val()==$('#new-passphrase').val()){
+      $('#create_passphrase_button').removeAttr('disabled')
+    }
+    else {
+      $('#create_passphrase_button').attr('disabled', 'disabled')
     }
   });
 
+  $('#confirm_email').on('input', function(){
+    if($(this).val() == '') {
+      $('#confirm_email_button').attr('disabled', 'disabled')
+    }
+    else {
+      $('#confirm_email_button').removeAttr('disabled')
+    }
+  });
 
   COMMON_PASSWORDS = ["admin", "administrator", "jesus", "letmein", "master", "open sesame", "opensesame", "password", "sunshine", "trustnoi", "trustnol", "welcome"]
   KEY_PATTERNS = ["zxc", "cxz", "bnm", "mnb", "jkl", "lkj", "asd", "dsa", "qwe", "ewq", "iop", "poi"]
